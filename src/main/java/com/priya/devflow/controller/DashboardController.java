@@ -1,14 +1,24 @@
 package com.priya.devflow.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.priya.devflow.entity.Build;
+import com.priya.devflow.repository.BuildRepository;
 
+import com.priya.devflow.service.BuildService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.priya.devflow.service.BuildService;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 public class DashboardController {
 
+    @Autowired
+    private BuildService buildService;
+
+    // Dashboard API
     @GetMapping("/api/dashboard")
     public Map<String, Object> getDashboardData() {
 
@@ -24,6 +34,7 @@ public class DashboardController {
         return data;
     }
 
+    // Health API
     @GetMapping("/api/health")
     public Map<String, String> healthCheck() {
 
@@ -36,8 +47,31 @@ public class DashboardController {
         return health;
     }
 
-    @GetMapping("/api/message")
-    public String welcomeMessage() {
-        return "Welcome to DevFlow DevSecOps Platform!";
+    // SAVE build into PostgreSQL
+    @PostMapping("/api/build")
+    public Build createBuild(@RequestBody Build build) {
+        return buildService.createBuild(build);
+    }
+
+    // FETCH all builds from PostgreSQL
+    @GetMapping("/api/builds")
+    public List<Build> getAllBuilds() {
+        return buildService.getAllBuilds();
+    }
+
+
+    @PutMapping("/api/build/{id}")
+    public Build updateBuild(@PathVariable Long id,
+                             @RequestBody Build updatedBuild) {
+
+        return buildService.updateBuild(id, updatedBuild);
+    }
+
+    @DeleteMapping("/api/build/{id}")
+    public String deleteBuild(@PathVariable Long id) {
+
+        buildService.deleteBuild(id);
+
+        return "Build deleted successfully";
     }
 }
