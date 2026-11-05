@@ -13,7 +13,7 @@ COPY src ./src
 COPY --from=web /web/dist ./src/main/resources/static
 RUN mvn -B -q -DskipTests package
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:25-jre
 RUN useradd --system --create-home --uid 10001 devflow
 WORKDIR /app
 COPY --from=build /build/target/devflow-*.jar app.jar
