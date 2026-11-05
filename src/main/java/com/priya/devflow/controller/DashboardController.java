@@ -1,77 +1,38 @@
 package com.priya.devflow.controller;
 
-import com.priya.devflow.entity.Build;
-import com.priya.devflow.repository.BuildRepository;
+import com.priya.devflow.dto.Dtos.DashboardSummary;
+import com.priya.devflow.dto.Dtos.TrendPoint;
+import com.priya.devflow.service.StatsService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.priya.devflow.service.BuildService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.priya.devflow.service.BuildService;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api")
 public class DashboardController {
 
-    @Autowired
-    private BuildService buildService;
+    private final StatsService stats;
 
-    // Dashboard API
-    @GetMapping("/api/dashboard")
-    public Map<String, Object> getDashboardData() {
-
-        Map<String, Object> data = new HashMap<>();
-
-        data.put("totalBuilds", 128);
-        data.put("successfulBuilds", 112);
-        data.put("failedBuilds", 8);
-        data.put("runningPipelines", 3);
-        data.put("dockerContainers", 14);
-        data.put("repositories", 9);
-
-        return data;
+    public DashboardController(StatsService stats) {
+        this.stats = stats;
     }
 
-    // Health API
-    @GetMapping("/api/health")
-    public Map<String, String> healthCheck() {
-
-        Map<String, String> health = new HashMap<>();
-
-        health.put("status", "UP");
-        health.put("application", "DevFlow");
-        health.put("version", "1.0");
-
-        return health;
+    @GetMapping("/dashboard")
+    public DashboardSummary summary() {
+        return stats.summary();
     }
 
-    // SAVE build into PostgreSQL
-    @PostMapping("/api/build")
-    public Build createBuild(@RequestBody Build build) {
-        return buildService.createBuild(build);
+    @GetMapping("/dashboard/trend")
+    public List<TrendPoint> trend(@RequestParam(defaultValue = "14") int days) {
+        return stats.trend(days);
     }
 
-    // FETCH all builds from PostgreSQL
-    @GetMapping("/api/builds")
-    public List<Build> getAllBuilds() {
-        return buildService.getAllBuilds();
-    }
-
-
-    @PutMapping("/api/build/{id}")
-    public Build updateBuild(@PathVariable Long id,
-                             @RequestBody Build updatedBuild) {
-
-        return buildService.updateBuild(id, updatedBuild);
-    }
-
-    @DeleteMapping("/api/build/{id}")
-    public String deleteBuild(@PathVariable Long id) {
-
-        buildService.deleteBuild(id);
-
-        return "Build deleted successfully";
+    @GetMapping("/health")
+    public Map<String, String> health() {
+        return Map.of("status", "UP", "application", "DevFlow");
     }
 }
