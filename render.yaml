@@ -1,0 +1,48 @@
+databases:
+  - name: devflow-db
+    databaseName: devflow
+    user: devflow
+    plan: free
+
+services:
+  - type: web
+    name: devflow
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: devflow-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: devflow-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: devflow-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: devflow-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: devflow-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: DEVFLOW_API_KEY
+        generateValue: true
+      - key: GITHUB_WEBHOOK_SECRET
+        generateValue: true
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: DEMO_DATA
+        value: "false"
