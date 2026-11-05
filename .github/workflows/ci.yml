@@ -46,7 +46,7 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: devflow
       - name: Upload coverage report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jacoco-report
           path: target/site/jacoco
@@ -139,7 +139,7 @@ jobs:
             echo "$sev=$n" >> "$GITHUB_OUTPUT"
             echo "$sev=$n"
           done
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: trivy-fs-report
           path: trivy-fs.json
@@ -186,7 +186,7 @@ jobs:
           echo "high=$(jq '[.dependencies[]?.vulnerabilities[]? | select(.severity=="HIGH")] | length' "$report")" >> "$GITHUB_OUTPUT"
           echo "medium=$(jq '[.dependencies[]?.vulnerabilities[]? | select(.severity=="MEDIUM" or .severity=="MODERATE")] | length' "$report")" >> "$GITHUB_OUTPUT"
           echo "low=$(jq '[.dependencies[]?.vulnerabilities[]? | select(.severity=="LOW")] | length' "$report")" >> "$GITHUB_OUTPUT"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: dependency-check-report
@@ -233,7 +233,7 @@ jobs:
             echo "$sev=$n" >> "$GITHUB_OUTPUT"
             echo "$sev=$n"
           done
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: trivy-image-report
           path: trivy-image.json
